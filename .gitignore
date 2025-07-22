@@ -1,0 +1,19 @@
+# Ignore environment variable files
+.env
+
+# Ignore Python cache directories and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore build and distribution folders
+build/
+dist/
+
+# Ignore virtual environment folders
+venv/
+.env/
+
+# Ignore db.*
+db.*
