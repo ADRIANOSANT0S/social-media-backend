@@ -72,7 +72,7 @@ make dev
 
 - make dev - start Django development server.
 - make migrate - run migrations.
-- make makemigrations - create new migrations.
+- make makemigrations name=<app_name> - Generate a new migration file for specified app. Example: make makemigrations name=app_name'
 - make startapp name=<app_name> - create new Django app inside apps/ folder.
 - make lint - run linters (flake8, black, isort checks).
 - make format auto format code (flake8, black, isort).
