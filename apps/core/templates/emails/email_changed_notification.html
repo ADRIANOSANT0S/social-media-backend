@@ -1,0 +1,22 @@
+{% extends "emails/email_notification_base.html" %}
+{% load i18n %}
+
+{% block subject %}
+    {% trans "Your email has been changed" %}
+{% endblock %}
+
+{% block heading %}
+    {% trans "Email Updated Successfully" %}
+{% endblock %}
+
+{% block body %}
+    <p>
+        {% trans "Hello," %} <strong>{{ name }}</strong>,
+    </p>
+    <p>
+        {% trans "We wanted to let you know that your account email has been changed successfully." %}
+    </p>
+    <p>
+        {% trans "If this was you, no further action is needed." %}
+    </p>
+{% endblock %}
