@@ -18,7 +18,7 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
+env = environ.Env(SECURE_COOKIES=(bool, False))
 
 # Set the default value for the environment variable
 env.read_env(BASE_DIR / ".env")
@@ -28,11 +28,15 @@ env.read_env(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
+SECURE_COOKIES = env.bool("SECURE_COOKIES")
+
+# Set the default value for the environment variable
+env.read_env(BASE_DIR / ".env")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.1"])
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -46,7 +50,11 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
+    "apps.users",
+    "apps.auths",
 ]
+
+AUTH_USER_MODEL = "users.User"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -59,12 +67,19 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    "apps.core.backends.authenticate_backend.AuthenticateBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "apps" / "core" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -138,12 +153,16 @@ MEDIA_ROOT = BASE_DIR / "medias"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # CORS settings
-CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS")
+CSRF_TRUSTED_ORIGINS = ["https://app.localhost:3000"]
+CORS_ALLOWED_ORIGINS = ["https://app.localhost:3000"]
+CORS_ALLOW_CREDENTIALS = True
+
 
 # REST Framework settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication"
+        "apps.core.backends.CookieJWTAuthentication.CookieJWTAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -159,7 +178,35 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+# Redis settings
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {"CLIENT CLASS": "django_redis.client.DefaultClient"},
+    }
+}
+
 # CSRF settings
-CSRF_COOKIE_SECURE = not DEBUG
+# Cookies de sessão
+SESSION_COOKIE_HTTPONLY = True  # sempre True, bom pra segurança
+SESSION_COOKIE_SECURE = False  # False em dev, True em produção (HTTPS)
+SESSION_COOKIE_SAMESITE = "Lax"  # Lax é bom para login em dev
+SESSION_COOKIE_DOMAIN = None  # None em dev, .sev7tech.com em produção
+
+# Cookies de CSRF
 CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = False  # True em produção
 CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_DOMAIN = None
+
+
+# Email settings
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # use this for production 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "smtp.seuservidor.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "seu_email@dominio.com"
+EMAIL_HOST_PASSWORD = "sua_senha"
+DEFAULT_FROM_EMAIL = "Your App <noreply@dominio.com>"
+EMAIL_FILE_PATH = "/tmp/app-emails"

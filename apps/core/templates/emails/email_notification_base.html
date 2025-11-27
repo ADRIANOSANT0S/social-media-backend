@@ -1,0 +1,34 @@
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block subject %}{% endblock %}</title>
+</head>
+<body style="background-color: #000; color: #ffffff; font-family: Arial, sans-serif;">
+    <main style="background-color: #111; width: 90%; max-width:600px; padding: 24px; margin: 0 auto; border-radius: 8px;">
+        <h1 style="color: white; font-size: 2.5em; font-weight: 600; margin-bottom: 24px;">x</h1>
+
+        <h2 style="font-size: 2em; margin-bottom: 16px;">{% block heading %}{% endblock %}</h2>
+
+        <div style="font-size: 1.125em; margin-bottom: 24px;">
+            {% block body %}{% endblock %}
+        </div>
+
+        <p style="font-size: 1.125em; color: #ccc; margin-top: 24px;">
+            {% for line in user_agent_line %}
+                {{ line }}<br />
+            {% endfor %}
+        </p>
+    </main>
+
+    <footer style="font-size: 12px; color: #aaa; margin-top: 36px; text-align: center; width: 90%; max-width:600px; margin: 24px auto;">
+        {% block footer %}
+            {% trans "If this wasn't you, please" %} 
+            <a href="mailto:yourapp@suport.com" style="color: #4da6ff;">{% trans "contact support" %}</a>.
+        {% endblock %}
+    </footer>
+</body>
+</html>

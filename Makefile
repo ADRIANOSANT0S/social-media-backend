@@ -1,6 +1,7 @@
 .PHONY: run server migrate makemigrations startapp shell test
 
-MANAGE=poetry run python manage.py
+POETRY= poetry run
+MANAGE= $(POETRY) python manage.py
 
 dev:
 	@echo "starting the Django development server..."
@@ -13,7 +14,7 @@ migrate:
 	
 makemigrations:
 	@echo "createing migrations for the database..."
-	$(MANAGE) makemigrations
+	$(MANAGE) makemigrations $(name)
 
 startapp:
 	@echo "Creating app named $(name)..."
@@ -23,18 +24,30 @@ startapp:
 
 lint:
 	@echo "running linters..."
-	poetry run flake8 .
-	poetry run black --check .
-	poetry run isort --check .
+	$(POETRY) flake8 .
+	$(POETRY) black --check .
+	$(POETRY) isort --check .
 
 format:
 	@echo "Running black formatter..."
-	poetry run black . &&  poetry run isort . && poetry run isort .
+	$(POETRY) black . &&  $(POETRY) isort . && $(POETRY) isort .
 
 shell:
 	@echo "starting the Django shell"
 	$(MANAGE) shell
 
-test:
+tests:
 	@echo "running the Django tests.."
-	$(MANAGE) test
+	$(POETRY) pytest 
+
+test: 
+	@echo "running the Django test: $(TEST)..."
+	$(POETRY) pytest $(TEST)
+
+test-watch:
+	@echo "starting the pytest watch mode..."
+	$(POETRY) ptw
+
+test-debug:
+	@echo "starting the pytest debug mode..."
+	$(POETRY) pytest --pdb --maxfail=1 -q

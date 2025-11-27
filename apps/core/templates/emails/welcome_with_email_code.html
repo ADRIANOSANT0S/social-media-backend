@@ -1,0 +1,55 @@
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% trans "Welcome to Our App!" %}</title>
+    </head>
+    <body style="background-color: #000; color: #ffffff; font-family: Arial, sans-serif; margin: 0; padding: 0;">
+
+        <main style="background-color: #111; width: 90%; max-width: 600px; padding: 24px; margin: 40px auto; border-radius: 8px;">
+            <!-- Heading -->
+            <h1 style="color: white; font-size: 2.5em; font-weight: 600; margin-bottom: 24px;">x</h1>
+
+            <h2 style="color: white; font-size: 2.5em; font-weight: 600; margin-bottom: 24px;">
+                {% block name %}{% trans "Welcome, " %}{{ name }}{% endblock %}
+            </h2>
+
+            <!-- Body -->
+            <p style="font-size: 1.125em; margin-bottom: 16px;">
+                {% trans "We are very happy to have you on board!" %}
+            </p>
+
+            <p style="font-size: 1.125em; margin-bottom: 16px;">
+                {% trans "To complete your account setup and secure your email, use the code below:" %}
+            </p>
+
+            <p style="font-size: 1.5em; font-weight: bold; color: #4da6ff; text-align: center; margin: 24px 0;">
+                {{ code }}
+            </p>
+
+            <p style="font-size: 1.125em; margin-bottom: 16px;">
+                {% trans "This code is valid only for changing your account email. Please keep it in a safe place and do not share it with anyone." %}
+            </p>
+
+            <p style="font-size: 1.125em; margin-bottom: 24px;">
+                {% trans "If you did not request this or suspect someone else is trying to access your account, contact support immediately." %}
+            </p>
+
+            <!-- Heart & Signature -->
+            <p style="margin-top: 32px; font-size: 1em; color: #ccc;">
+                ❤️ {% trans "With care," %}<br />
+                <strong>X Team</strong>
+            </p>
+        </main>
+
+        <!-- Footer -->
+        <footer style="font-size: 12px; color: #aaa; margin-top: 36px; text-align: center; width: 90%; max-width: 600px; margin: 24px auto;">
+            {% trans "For more information or help, please" %} 
+            <a href="mailto:support@yourapp.com" style="color: #4da6ff;">{% trans "contact support" %}</a>.
+        </footer>
+
+</body>
+</html>

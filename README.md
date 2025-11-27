@@ -70,14 +70,25 @@ make dev
 
 ## Useful Makefile Commands
 
-- make dev - start Django development server.
-- make migrate - run migrations.
-- make makemigrations - create new migrations.
-- make startapp name=<app_name> - create new Django app inside apps/ folder.
-- make lint - run linters (flake8, black, isort checks).
-- make format auto format code (flake8, black, isort).
-- make shell - open Django shell
-- make test - run tests
+### Development
+- `make dev` - start the Django development server.
+- `make shell` - open Django shell
+- `make startapp name=<app_name>` - create new Django app inside apps/ folder. Exemple: `make startapp name=myapp`
+
+### Migrations
+- `make migrate` - run migrations.
+- `make makemigrations name=<app_name>` - Generate a new migration file for the specified app. Example: make makemigrations name=users
+
+### Code Quality
+- `make lint` - run linters (flake8, black, isort checks).
+- `make format` - auto format code (flake8, black, isort).
+
+### Testing
+- `make tests` - run all tests
+- `make test` - run a specific test. Exemple: `make test TEST=apps/users/tests/user_model_test.py`
+- `make test-watch` - run pytest in watch mode, automatically re-running tests on file changes.
+- `make test-debug` - run pytest in debug mode, stop in first failure, open pdb console.
+
 
 ## Notes
 
