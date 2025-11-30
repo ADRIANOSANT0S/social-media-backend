@@ -5,6 +5,8 @@ from apps.users.serializers import UserSimpleSerializer
 
 
 class FollowSerializer(serializers.ModelSerializer):
+    """Serializer to return list of followers and following."""
+
     follower = UserSimpleSerializer(read_only=True)
     following = UserSimpleSerializer(read_only=True)
 

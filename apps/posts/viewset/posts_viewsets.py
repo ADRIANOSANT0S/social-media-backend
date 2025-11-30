@@ -28,6 +28,5 @@ class PostListView(APIView):
             serializer = PostSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        # Caso a paginação não seja aplicada (por exemplo, paginação desabilitada)
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)

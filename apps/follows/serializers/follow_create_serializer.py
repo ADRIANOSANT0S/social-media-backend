@@ -4,6 +4,8 @@ from apps.follows.models import Follow
 
 
 class FollowCreateSerializer(serializers.ModelSerializer):
+    """Serializer to create follow relationship."""
+
     following_id = serializers.IntegerField(write_only=True)
 
     class Meta:

@@ -19,7 +19,6 @@ class FollowViewSets(APIView):
         follow_type = request.query_params.get("type")
 
         if not follow_type:
-            # Sem query param type: retorna seguidores e seguindo juntos
             followers = Follow.objects.filter(following=request.user)
             following = Follow.objects.filter(follower=request.user)
 
