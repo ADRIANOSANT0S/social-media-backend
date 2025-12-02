@@ -24,4 +24,5 @@ urlpatterns = [
     path("api/auths/", include("apps.auths.urls")),
     path("api/follows/", include("apps.follows.urls")),
     path("api/posts/", include("apps.posts.urls")),
+    path("api/likes/", include("apps.likes.urls")),
 ]
