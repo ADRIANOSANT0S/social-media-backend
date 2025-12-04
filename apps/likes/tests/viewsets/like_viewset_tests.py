@@ -15,7 +15,9 @@ class LikeViewSetTestCase(APITestCase):
     def test_toggle_creates_like_if_not_exists(self):
         """Should create a like if it does not exist when toggling."""
 
-        response = self.client.post("/api/likes/toggle/", {"post_id": self.post.id})
+        url = f"/api/posts/{self.post.id}/likes/toggle/"
+        response = self.client.post(url)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(int(response.data["post"]), self.post.id)
         self.assertEqual(int(response.data["user"]["id"]), self.user.id)
@@ -26,41 +28,43 @@ class LikeViewSetTestCase(APITestCase):
 
         Like.objects.create(user=self.user, post=self.post)
 
-        response = self.client.post("/api/likes/toggle/", {"post_id": self.post.id})
+        url = f"/api/posts/{self.post.id}/likes/toggle/"
+        response = self.client.post(url)
+
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Like.objects.filter(user=self.user, post=self.post).count(), 0)
 
-    def test_toggle_returns_400_without_post_id(self):
-        """Should return 400 Bad Request if post_id is missing in toggle."""
+    def test_toggle_returns_404_without_post_pk_in_url(self):
+        """Should return 400 Bad Request if post_pk is missing in URL."""
 
-        response = self.client.post("/api/likes/toggle/", {})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("post_id", response.data["detail"].lower())
+        url = "/api/likes/toggle/"
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_post_likes_returns_total_and_users(self):
         """Should return total likes and users who liked a post."""
 
-        # Cria likes de outros usuários para o post
         user2 = UserFactory.create()
         Like.objects.create(user=self.user, post=self.post)
         Like.objects.create(user=user2, post=self.post)
 
-        response = self.client.get(f"/api/likes/post_likes/?post_id={self.post.id}")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = f"/api/posts/{self.post.id}/likes/post_likes/"
+        response = self.client.get(url)
 
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("total_likes", response.data)
         self.assertIn("users", response.data)
-
         self.assertEqual(response.data["total_likes"], 2)
         self.assertEqual(len(response.data["users"]), 2)
 
-        # Verifica se o usuário atual está na lista
         user_ids = [u["id"] for u in response.data["users"]]
         self.assertIn(self.user.id, user_ids)
 
-    def test_post_likes_returns_400_without_post_id(self):
-        """Should return 400 Bad Request if post_id is missing in post_likes."""
+    def test_post_likes_returns_404_without_post_pk_in_url(self):
+        """Should return 400 Bad Request if post_pk is missing in URL."""
 
-        response = self.client.get("/api/likes/post_likes/")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("post_id", response.data["detail"].lower())
+        url = "/api/posts/likes/"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

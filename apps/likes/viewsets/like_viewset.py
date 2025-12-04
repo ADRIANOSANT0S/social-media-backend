@@ -12,15 +12,15 @@ class LikeViewSet(viewsets.GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=["post"])
-    def toggle(self, request):
-        post_id = request.data.get("post_id")
-        if not post_id:
+    def toggle(self, request, post_pk=None):
+        if not post_pk:
             return Response(
-                {"detail": "post_id is required."}, status=status.HTTP_400_BAD_REQUEST
+                {"detail": "post_pk is required in URL."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         user = request.user
-        like = Like.objects.filter(user=user, post_id=post_id).first()
+        like = Like.objects.filter(user=user, post_id=post_pk).first()
 
         if like:
             like.delete()
@@ -29,7 +29,7 @@ class LikeViewSet(viewsets.GenericViewSet):
             )
         else:
             try:
-                new_like = Like.objects.create(user=user, post_id=post_id)
+                new_like = Like.objects.create(user=user, post_id=post_pk)
                 serializer = LikeSerializer(new_like)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except IntegrityError:
@@ -39,15 +39,14 @@ class LikeViewSet(viewsets.GenericViewSet):
                 )
 
     @action(detail=False, methods=["get"])
-    def post_likes(self, request):
-        post_id = request.query_params.get("post_id")
-        if not post_id:
+    def post_likes(self, request, post_pk=None):
+        if not post_pk:
             return Response(
-                {"detail": "post_id query parameter is required."},
+                {"detail": "post_pk is required in URL."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        likes = Like.objects.filter(post_id=post_id).select_related("user")
+        likes = Like.objects.filter(post_id=post_pk).select_related("user")
         total_likes = likes.count()
         users = [like.user for like in likes]
         users_serializer = UserSimpleSerializer(users, many=True)
