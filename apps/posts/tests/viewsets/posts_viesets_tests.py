@@ -9,14 +9,14 @@ from apps.users.UserFactory import UserFactory
 pytestmark = pytest.mark.django_db
 
 
-class TestPostListView:
+class TestPostViewSet:
     """Test suite for the Post list view."""
 
     def setup_method(self):
         """Setup base state with users, follow relationships, and posts."""
 
         self.client = APIClient()
-        self.url = reverse("posts")
+        self.url = reverse("posts-list")
 
         self.user = UserFactory.create()
         self.followed_user = UserFactory.create()
